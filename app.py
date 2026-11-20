@@ -424,6 +424,9 @@ def analyze_skin_tone(image_jpeg: bytes, api_key: str, models: list[str]) -> dic
                 if transient and attempt == 1:
                     time.sleep(2)
                     continue
+                if transient:
+                    last_error = AnalysisError(_friendly_api_error(exc))
+                    break  # still overloaded: try the next model
                 raise AnalysisError(_friendly_api_error(exc)) from None
             except Exception as exc:  # network failures, timeouts, SDK errors
                 log.warning("Unexpected Gemini failure: %s", type(exc).__name__)
